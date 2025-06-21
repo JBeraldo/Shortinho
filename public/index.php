@@ -11,6 +11,6 @@ $twig = Twig::create(__DIR__ . '/../app/Templates', ['cache' => false]);
 
 $app->add(TwigMiddleware::create($app, $twig));
 
-require_once __DIR__ . '/../App/Routes/route.php';
+require_once __DIR__ . '/../app/Routes/route.php';
 
 $app->run();
