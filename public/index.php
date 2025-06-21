@@ -7,7 +7,7 @@ use Slim\Views\TwigMiddleware;
 require __DIR__ . '/../vendor/autoload.php';
 
 $app = AppFactory::create();
-$twig = Twig::create(__DIR__ . '/../App/Templates', ['cache' => false]);
+$twig = Twig::create(__DIR__ . '/../app/Templates', ['cache' => false]);
 
 $app->add(TwigMiddleware::create($app, $twig));
 
