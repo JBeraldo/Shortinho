@@ -1,10 +1,8 @@
 <?php
 
-use App\Controller\PageController;
+use App\Controller\{PageController, RedirectController};
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-
-// Add Twig-View Middleware
 
 $app->get('/', function (Request $request, Response $response, $args) {
     $response->getBody()->write("Hello world!");
@@ -12,3 +10,4 @@ $app->get('/', function (Request $request, Response $response, $args) {
 });
 
 $app->get('/store', [PageController::class, 'index']);
+$app->post('/store', [RedirectController::class, 'store']);

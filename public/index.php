@@ -7,10 +7,10 @@ use Slim\Views\TwigMiddleware;
 require __DIR__ . '/../vendor/autoload.php';
 
 $app = AppFactory::create();
-$twig = Twig::create(__DIR__ . '/../app/Templates', ['cache' => false]);
+$twig = Twig::create(__DIR__ . '/../app/Template', ['cache' => false]);
 
 $app->add(TwigMiddleware::create($app, $twig));
 
-require_once __DIR__ . '/../app/Routes/route.php';
+require_once __DIR__ . '/../app/Route/route.php';
 
 $app->run();
