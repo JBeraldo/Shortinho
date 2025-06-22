@@ -4,14 +4,16 @@ declare(strict_types = 1);
 
 namespace App\Facade;
 
-use App\Facade\PDOConnection;
+use App\Singleton\PDOConnection;
 use App\Helper\TypeMatcher;
 use PDO;
 
 class Database {
 
+    static PDO $connection;
+
     public static function executeStatement(string $sql, array $binds =[]) : bool {
-        $connection = PDOConnection::getInstance();
+        $connection = self::getConnection();
         $stmt = $connection->prepare($sql);
 
         foreach($binds as $key => &$value)
@@ -23,7 +25,7 @@ class Database {
     }
 
     public static function queryAll(string $sql, array $binds = []) : array {
-        $connection = PDOConnection::getInstance();
+        $connection = self::getConnection();
         $stmt = $connection->prepare($sql);
 
         foreach($binds as $key => &$value)
@@ -37,7 +39,7 @@ class Database {
     }
 
     public static function queryFirst(string $sql, array $binds = []) : array | bool {
-        $connection = PDOConnection::getInstance();
+        $connection = self::getConnection();
         $stmt = $connection->prepare($sql);
 
         foreach($binds as $key => &$value)
@@ -52,7 +54,7 @@ class Database {
 
     public static function migrateUp(): void
     {
-        $connection = PDOConnection::getInstance();
+        $connection = self::getConnection();
         $connection->exec("CREATE TABLE IF NOT EXISTS urls (
             id SERIAL,
             url varchar(500) NOT NULL,
@@ -60,6 +62,14 @@ class Database {
             access_count int default 0,
             PRIMARY KEY (id)
         )");
+    }
+
+    public static function getConnection(): PDO {
+        if (!isset(self::$connection)) {
+            self::$connection = PDOConnection::getInstance();
+        }
+
+        return self::$connection;
     }
 
 }

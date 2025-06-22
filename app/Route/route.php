@@ -12,7 +12,8 @@ $app->get('/', function (Request $request, Response $response) {
 });
 
 $app->get('/store', [PageController::class, 'index']);
-$app->get('/{key}', [RedirectController::class, 'redirect']);
+$app->get('/list', [RedirectController::class, 'list']);
 $app->post('/store', [RedirectController::class, 'store']);
+$app->get('/{key}', [RedirectController::class, 'redirect']);
 
 $app->get('/database/up', [DatabaseController::class, 'up']);

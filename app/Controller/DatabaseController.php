@@ -9,6 +9,9 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Facade\Database;
 
+use Slim\Views\Twig;
+
+
 class DatabaseController
 {
    private $container;
@@ -21,6 +24,8 @@ class DatabaseController
    public function up(Request $request, Response $response): Response
    {
         Database::migrateUp();
+
+        return $response->withStatus(200)->getBody()->write("Ok");
    }
 
 }

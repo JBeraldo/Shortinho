@@ -55,4 +55,16 @@ class RedirectController
         return $response->withHeader('Location', $url)->withStatus(302);
    }
 
+    public function list(Request $request, Response $response): Response
+    {
+         $view = Twig::fromRequest($request);
+
+         $urls = $this->service->getURLList();
+
+         return $view->render($response, 'List/list.html.twig', [
+             "urls" => $urls
+         ]);
+     
+    }
+
 }

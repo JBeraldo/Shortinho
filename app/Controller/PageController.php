@@ -23,9 +23,7 @@ class PageController
    {
         $view = Twig::fromRequest($request);
     
-        return $view->render($response, 'Create/index.html.twig', [
-            'name' => 'John',
-        ]);
+        return $view->render($response, 'Create/index.html.twig');
 
    }
 

@@ -5,49 +5,52 @@ declare(strict_types = 1);
 namespace App\Service;
 
 use App\Facade\Database;
+use App\Facade\Redis;
+use App\Repository\RedirectRepository;
 
 class RedirectService {
 
-    public function __construct()
+    public function __construct(private RedirectRepository $repository)
     {
-        // ...
+        $this->repository = $repository;
     }
 
-    public function store(string $url) : string | null {
-        $key = bin2hex(random_bytes(3));
-
-        $binds[':p_url'] = $url;
-        $binds[':p_key'] = $key;
-
-        $sql = "INSERT INTO urls (url, key) VALUES (:p_url, :p_key)";
-
-        try {
-
-            Database::executeStatement($sql,$binds);
-
-        } catch (\PDOException $th) {
-            return null;
-        }
-
-        return $key;
+    public function store(string $url) : string | bool
+    {
+        return $this->repository->store($url);
     }
 
-    public function getURLbyKey(string $key) : string | null {
+    public function getURLbyKey(string $key) : string | bool
+    {
+        $url = Redis::getUrl($key);
 
-        $binds[':p_key'] = $key;
-
-        $sql = "SELECT url FROM urls WHERE key = :p_key";
-
-        try {
-
-        $response = Database::queryFirst($sql,$binds);
-        
-        } catch (\PDOException $th) {
-            return null;
+        if(!$url)
+        {
+            $url = $this->repository->getURLbyKey($key);
+            if($url)
+            {
+                Redis::storeURL($key,$url);
+                Redis::incrementURL($key);
+            }
+        }
+        else{
+            Redis::incrementURL($key);
         }
 
-        ["url" => $url] = $response;
- 
         return $url;
+    }
+
+    public function getURLList() : array | bool
+    {
+    
+        $redis_urls =  Redis::getURLList();
+        $database_urls = $this->repository->getURLList();
+
+        foreach($database_urls as &$url)
+        {
+            $url['redis_count'] = isset($redis_urls[$url['key']]) ? $redis_urls[$url['key']]['access_count'] : 0;
+        }
+
+        return $database_urls;
     }
 }

@@ -1,0 +1,32 @@
+{% extends 'Layout/base.html.twig' %}
+{% block title %} Listando Rotas {% endblock %}
+{% block content %}
+
+<body>
+    <main>
+        <div class="container d-flex align-items-start" style="min-height: 100vh;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Chave</th>
+                  <th scope="col">URL</th>
+                  <th scope="col">Acessos PostgreSQL</th>
+                  <th scope="col">Acessos Redis</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for url in urls %}
+                    <tr>
+                      <td>{{ url.key|e}}</td>
+                      <td>{{ url.url|e}}</td>
+                      <td>{{ url.database_count|e}}</td>
+                      <td>{{ url.redis_count|e}}</td>
+                    </tr>                    
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
+    <main>
+</body>
+
+{% endblock %}
