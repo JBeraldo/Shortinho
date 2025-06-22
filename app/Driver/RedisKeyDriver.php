@@ -18,7 +18,7 @@ class RedisKeyDriver implements RedisDriverInterface{
     {
         $keys = [
                     $key.':URL' => $url, 
-                    $key.':CNT' => 1
+                    $key.':CNT' => 0
         ];
 
         try {
