@@ -36,7 +36,7 @@ class Database {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function queryNext(string $sql, array $binds = []) : array | bool {
+    public static function queryFirst(string $sql, array $binds = []) : array | bool {
         $connection = PDOConnection::getInstance();
         $stmt = $connection->prepare($sql);
 

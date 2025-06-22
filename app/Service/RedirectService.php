@@ -40,7 +40,7 @@ class RedirectService {
 
         try {
 
-        $response = Database::queryNext($sql,$binds);
+        $response = Database::queryFirst($sql,$binds);
         
         } catch (\PDOException $th) {
             return null;

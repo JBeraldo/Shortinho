@@ -11,6 +11,7 @@ class PDOConnection {
 
     public static function getInstance() {
         if (!isset(self::$instance)) {
+            
             $database_name = $_ENV['DB_DATABASE'];
             $database_user = $_ENV['DB_USERNAME'];
             $database_password = $_ENV['DB_PASSWORD'];
