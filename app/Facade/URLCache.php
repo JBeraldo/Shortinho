@@ -9,7 +9,7 @@ use App\Interface\RedisDriverInterface;
 use App\Factory\RedisFactory;
 use PDO;
 
-class Redis {
+class URLCache {
     static RedisDriverInterface $driver;
 
     public static function storeUrl(string $key, string $url): bool {

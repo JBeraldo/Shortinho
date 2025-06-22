@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace App\Service;
 
 use App\Facade\Database;
-use App\Facade\Redis;
+use App\Facade\URLCache;
 use App\Repository\RedirectRepository;
 
 class RedirectService {
@@ -22,19 +22,19 @@ class RedirectService {
 
     public function getURLbyKey(string $key) : string | bool
     {
-        $url = Redis::getUrl($key);
+        $url = URLCache::getUrl($key);
 
         if(!$url)
         {
             $url = $this->repository->getURLbyKey($key);
             if($url)
             {
-                Redis::storeURL($key,$url);
-                Redis::incrementURL($key);
+                URLCache::storeURL($key,$url);
+                URLCache::incrementURL($key);
             }
         }
         else{
-            Redis::incrementURL($key);
+            URLCache::incrementURL($key);
         }
 
         return $url;
@@ -43,7 +43,7 @@ class RedirectService {
     public function getURLList() : array | bool
     {
     
-        $redis_urls =  Redis::getURLList();
+        $redis_urls =  URLCache::getURLList();
         $database_urls = $this->repository->getURLList();
 
         foreach($database_urls as &$url)
