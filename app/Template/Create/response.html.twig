@@ -1,3 +1,7 @@
-<div class="alert alert-success" role="alert">
-  A simple success alert—check it out!
+<div class="alert alert-{{ key ? 'success' : 'danger' }}" role="alert">
+  {% if key is not null %}
+    Redirecionamento criado com sucesso com a chave: {{ key|e }}
+  {% else %}
+    Erro ao criar redirecionamento
+  {% endif %}
 </div>

@@ -10,8 +10,9 @@
                 <form hx-post="/store"
                       hx-target="#result"
                       hx-swap="outerHTML"
+                      hx-on::after-request="if(event.detail.successful) this.reset()"
                 >
-                    <input class="form-control" id="url" name="url" type="text" hx-sync="closest form:abort">
+                    <input class="form-control" placeholder="Digite o link de destino" id="url" name="url" type="text" hx-sync="closest form:abort">
                     <div class="row" >
                         <div class="col-12 d-flex justify-content-center">
                             <button class="btn btn-success my-2" type="submit">Salvar</button>
@@ -22,7 +23,5 @@
         </div>
         <main>
 </body>
-
-
 
 {% endblock %}

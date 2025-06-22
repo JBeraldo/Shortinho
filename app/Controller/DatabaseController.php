@@ -7,10 +7,9 @@ namespace App\Controller;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use App\Facade\Database;
 
-use Slim\Views\Twig;
-
-class PageController
+class DatabaseController
 {
    private $container;
 
@@ -19,14 +18,9 @@ class PageController
    {
    }
 
-   public function index(Request $request, Response $response): Response
+   public function up(Request $request, Response $response): Response
    {
-        $view = Twig::fromRequest($request);
-    
-        return $view->render($response, 'Create/index.html.twig', [
-            'name' => 'John',
-        ]);
-
+        Database::migrateUp();
    }
 
 }
