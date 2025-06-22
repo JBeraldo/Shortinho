@@ -8,7 +8,7 @@ use App\Interface\RedisDriverInterface;
 use Redis;
 
 
-class RedisKeyDriver implements RedisDriverInterface{
+class RedisListDriver implements RedisDriverInterface{
 
     public function __construct(private Redis $redis) {
         $this->redis = $redis;
@@ -16,23 +16,20 @@ class RedisKeyDriver implements RedisDriverInterface{
 
     public function setURL(string $key, mixed $url, int $ttl = 0): bool
     {
-        $keys = [
-                    $key.':URL' => $url, 
-                    $key.':CNT' => 1
-        ];
+
+        $key = $key.':URL';
 
         try {
 
-            $key_count = $this->redis->exists(array_keys($keys));
+            $key_exists = $this->redis->exists($key);
 
-            if($key_count < 2) 
+            if(!$key_exists) 
             {
-                $this->redis->mSet($keys);
+                $this->redis->rPush($key,$url,0);
 
                 if($ttl > 0)
                 {
-                    $this->redis->expire($key.':URL', $ttl);
-                    $this->redis->expire($key.':CNT', $ttl);
+                    $this->redis->expire($key, $ttl);
                 }
             }
 
@@ -46,11 +43,19 @@ class RedisKeyDriver implements RedisDriverInterface{
     public function getURL(string $key): string | bool
     {
 
-        $url = '';
+        $key = $key.':URL';
+
+        $url = false;
 
         try {
 
-            $url = $this->redis->get($key.':URL');
+            $key_exists = $this->redis->exists($key);
+
+            if($key_exists){
+
+                $url = $this->redis->lindex($key,0);
+
+            }
 
         } catch (\Throwable $th) {
            return false;
@@ -66,7 +71,13 @@ class RedisKeyDriver implements RedisDriverInterface{
 
         try {
 
-            $count = $this->redis->get($key.':CNT');
+            $key_exists = $this->redis->exists($key);
+
+            if($key_exists){
+
+                $count = (int) $this->redis->lindex($key,1);
+
+            }
 
         } catch (\Throwable $th) {
            return false;
@@ -78,21 +89,20 @@ class RedisKeyDriver implements RedisDriverInterface{
     public function incrementURL(string $key, int $increment_by = 1): bool 
     {
 
-        $key = $key.':CNT';
+        $key = $key.':URL';
 
         try {
 
             $key_exists = $this->redis->exists($key);
 
-            if(!$key_exists) 
+            if($key_exists) 
             {
-                throw new Exception('Key not found');
+                $count = $this->getURLCount($key);
+                $count = $this->redis->lSet($key,1,$count+1);
             }
 
-            $count = $this->redis->incrBy($key,$increment_by);
-
         } catch (\Throwable $th) {
-           return false;
+            return false;
         }
 
         return true;
@@ -109,7 +119,7 @@ class RedisKeyDriver implements RedisDriverInterface{
             foreach($keys as $key)
             {
                 $pure_key = explode(':',$key)[0];
-                [$url,$count] =$this->redis->mGet([$pure_key.':URL',$pure_key.':CNT']);
+                [$url,$count] =$this->redis->lRange($key,0,1);
 
                 $urls[$pure_key] = ["url"=> $url,"access_count"=> $count];
             }

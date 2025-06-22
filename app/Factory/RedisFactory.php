@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Factory;
 
-use App\Driver\{RedisKeyDriver, RedisMockDriver};
+use App\Driver\{RedisKeyDriver, RedisMockDriver, RedisListDriver};
 use App\Singleton\RedisConnection;
 
 use PDO;
@@ -16,7 +16,8 @@ class RedisFactory {
         
         $driver = match ($_ENV['REDIS_STRATEGY']) {
             "KEY" => new RedisKeyDriver($redis),
-             default => new RedisMockDriver($redis)
+            "LIST" => new RedisListDriver($redis),
+            default => new RedisMockDriver($redis)
         };
 
         return $driver;
