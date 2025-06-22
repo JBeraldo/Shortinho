@@ -2,6 +2,8 @@ FROM php:8.4.8-fpm as base
 
 WORKDIR /var/www
 
+COPY --from=composer:2.7.2 /usr/bin/composer /usr/bin/composer
+
 ENV PHP_OPCACHE_ENABLE="0" \
     PHP_OPCACHE_VALIDATE_TIMESTAMPS="0" \
     PHP_OPCACHE_MAX_ACCELERATED_FILES="10000" \
