@@ -25,7 +25,7 @@ class DatabaseController
    {
         Database::migrateUp();
 
-        return $response->withStatus(200)->getBody()->write("Ok");
+        return $response->getBody()->write("Ok");
    }
 
 }
